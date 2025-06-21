@@ -88,6 +88,7 @@ export function QuizView({ topic, questions, onFinish, onExit }: QuizViewProps) 
               placeholder="Type your answer here (minimum 25 words)..."
               value={currentAnswer}
               onChange={(e) => setCurrentAnswer(e.target.value)}
+              onPaste={(e) => e.preventDefault()}
               className="h-full resize-none"
               disabled={status !== 'unverified'}
             />

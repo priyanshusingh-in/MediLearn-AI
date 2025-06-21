@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/auth-context';
 import { SigninForm } from '@/components/signin-form';
 import Link from 'next/link';
-import { Stethoscope } from 'lucide-react';
+import { Stethoscope, Loader2 } from 'lucide-react';
 
 export default function SigninPage() {
   const { user, loading } = useAuth();
@@ -20,7 +20,11 @@ export default function SigninPage() {
   }, [user, loading, router]);
 
   if (loading || user) {
-    return null;
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
   }
 
   return (

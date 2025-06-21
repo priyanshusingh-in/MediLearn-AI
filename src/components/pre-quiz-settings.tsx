@@ -15,16 +15,13 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { MedicalTopic } from './subject-selector';
 import { ArrowLeft } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+
 
 const formSchema = z.object({
   preparationContext: z.string().min(3, {
@@ -43,6 +40,24 @@ interface PreQuizSettingsProps {
   onBack: () => void;
 }
 
+const questionTypes = [
+  {
+    value: 'Conceptual Understanding',
+    title: 'Conceptual',
+    description: 'Tests your grasp of underlying principles and relationships.',
+  },
+  {
+    value: 'Factual Recall',
+    title: 'Factual Recall',
+    description: 'Focuses on specific facts, definitions, and classifications.',
+  },
+  {
+    value: 'Case-based Scenarios',
+    title: 'Case-based',
+    description: 'Applies knowledge to solve short clinical vignettes.',
+  },
+];
+
 export function PreQuizSettings({ topic, onSubmit, onBack }: PreQuizSettingsProps) {
   const form = useForm<PreQuizSettingsData>({
     resolver: zodResolver(formSchema),
@@ -53,7 +68,7 @@ export function PreQuizSettings({ topic, onSubmit, onBack }: PreQuizSettingsProp
   });
 
   return (
-    <Card className="w-full max-w-lg animate-in fade-in-50">
+    <Card className="w-full max-w-2xl animate-in fade-in-50 border-0 shadow-xl">
       <CardHeader>
         <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8">
@@ -67,13 +82,13 @@ export function PreQuizSettings({ topic, onSubmit, onBack }: PreQuizSettingsProp
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
               name="preparationContext"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>What are you preparing for?</FormLabel>
+                  <FormLabel className="text-base">What are you preparing for?</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g., USMLE Step 1, final exams" {...field} />
                   </FormControl>
@@ -88,23 +103,31 @@ export function PreQuizSettings({ topic, onSubmit, onBack }: PreQuizSettingsProp
               control={form.control}
               name="questionType"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Preferred Question Type</FormLabel>
-                   <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a question type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Conceptual Understanding">Conceptual Understanding</SelectItem>
-                      <SelectItem value="Factual Recall">Factual Recall</SelectItem>
-                      <SelectItem value="Case-based Scenarios">Case-based Scenarios</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Choose the type of questions you'd like to focus on.
-                  </FormDescription>
+                <FormItem className="space-y-3">
+                  <FormLabel className="text-base">Preferred Question Type</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2"
+                    >
+                      {questionTypes.map((type) => (
+                        <div key={type.value}>
+                          <RadioGroupItem value={type.value} id={type.value} className="sr-only" />
+                          <Label
+                            htmlFor={type.value}
+                            className={cn(
+                              'flex h-full flex-col justify-between rounded-md border-2 border-muted bg-popover p-4 transition-transform hover:-translate-y-1 cursor-pointer',
+                              field.value === type.value && 'border-primary'
+                            )}
+                          >
+                            <span className="mb-3 font-bold tracking-tight text-foreground">{type.title}</span>
+                            <span className="text-sm text-muted-foreground">{type.description}</span>
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

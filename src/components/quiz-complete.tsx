@@ -58,17 +58,28 @@ export function QuizComplete({ topic, scores, questions, answers, onRestart }: Q
     }
 
     const formattedFeedback = feedback.split('\n').map((line, index) => {
-      if (line.startsWith('# ')) {
-        return <h2 key={index} className="text-xl font-bold mt-6 mb-3 border-b pb-2">{line.substring(2)}</h2>;
+      // First, replace any markdown bolding with strong tags.
+      const boldedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+      if (boldedLine.startsWith('# ')) {
+        const content = boldedLine.substring(2);
+        return <h2 key={index} className="text-xl font-bold mt-6 mb-3 border-b pb-2" dangerouslySetInnerHTML={{ __html: content }} />;
       }
-      if (line.trim() === '') {
+      if (boldedLine.trim() === '') {
         return <br key={index} />;
       }
-       if (line.trim().startsWith('* ')) {
-        return <p key={index} className="text-sm text-foreground/80 leading-relaxed flex items-start"><span className="mr-2 mt-1">•</span><span>{line.substring(2)}</span></p>;
+      if (boldedLine.trim().startsWith('* ')) {
+        const content = boldedLine.substring(boldedLine.indexOf('* ') + 2);
+        return (
+          <p key={index} className="text-sm text-foreground/80 leading-relaxed flex items-start">
+            <span className="mr-2 mt-1">•</span>
+            <span dangerouslySetInnerHTML={{ __html: content }} />
+          </p>
+        );
       }
-      return <p key={index} className="text-sm text-foreground/80 leading-relaxed">{line}</p>;
+      return <p key={index} className="text-sm text-foreground/80 leading-relaxed" dangerouslySetInnerHTML={{ __html: boldedLine }} />;
     });
+
     return <div className="text-left space-y-2">{formattedFeedback}</div>;
   };
 

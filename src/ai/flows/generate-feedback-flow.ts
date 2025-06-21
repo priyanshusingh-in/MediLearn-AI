@@ -50,16 +50,16 @@ Here are their results:
   Score: {{this.score}}/10
 {{/each}}
 
-Your task is to provide comprehensive, personalized feedback and a study guide based on their performance.
+Your task is to provide comprehensive, personalized feedback and a study guide based on their performance. If the user's answer is "[SKIPPED]", it means they did not answer the question. Please acknowledge this in your feedback, especially in the "Areas for Improvement" section.
 
 1.  **# Overall Performance Summary:** Start with an encouraging summary of their overall performance. Calculate the average score and comment on it.
 
 2.  **# Strengths:** Point out specific questions where the student did well (high scores) and explain what made their answers strong (e.g., "Your answer to the question about... was excellent because you clearly identified...").
 
-3.  **# Areas for Improvement:** Gently identify patterns in the questions where the student struggled (low scores). Don't just list the wrong answers. Instead, try to diagnose the underlying knowledge gaps. For example, "It seems there might be some confusion around the diagnostic criteria for..." or "Let's focus on reinforcing the mechanism of action for...".
+3.  **# Areas for Improvement:** Gently identify patterns in the questions where the student struggled (low scores or skipped). Don't just list the wrong answers. Instead, try to diagnose the underlying knowledge gaps. For example, "It seems there might be some confusion around the diagnostic criteria for..." or "You skipped the question about..., which might indicate a gap in this area. Let's focus on reinforcing...".
 
-4.  **# Your Personalized Study Plan:** Provide actionable, concrete steps for improvement. This is the most important part. Be specific.
-    *   Suggest 2-3 core concepts they should review based on their incorrect answers.
+4.  **# Your Personalized Study Plan:** Provide actionable, concrete steps for improvement based on both incorrect answers and skipped questions. This is the most important part. Be specific.
+    *   Suggest 2-3 core concepts they should review based on their incorrect answers or skipped questions.
     *   Recommend specific study strategies (e.g., "Try creating flashcards for the key terminologies," "Watch a video explaining the pathophysiology of...").
     *   Frame this as a clear, manageable plan to help them succeed.
 

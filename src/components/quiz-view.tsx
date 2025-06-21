@@ -54,6 +54,22 @@ export function QuizView({ topic, questions, onFinish, onExit }: QuizViewProps) 
       onFinish(scores, answers);
     }
   };
+
+  const handleSkip = () => {
+    const updatedScores = [...scores, 0];
+    const updatedAnswers = [...answers, '[SKIPPED]'];
+    setScores(updatedScores);
+    setAnswers(updatedAnswers);
+
+    if (currentIndex < questions.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+      setStatus('unverified');
+      setCurrentAnswer('');
+      setResult(null);
+    } else {
+      onFinish(updatedScores, updatedAnswers);
+    }
+  };
   
   const progress = ((currentIndex + 1) / questions.length) * 100;
 
@@ -100,9 +116,14 @@ export function QuizView({ topic, questions, onFinish, onExit }: QuizViewProps) 
         <CardFooter>
           <div className="w-full">
             {status === 'unverified' && (
-              <Button size="lg" onClick={handleSubmit} disabled={wordCount < 25} className="w-full">
-                Submit Answer
-              </Button>
+              <div className="flex flex-col-reverse sm:flex-row gap-2 w-full">
+                <Button size="lg" onClick={handleSubmit} disabled={wordCount < 25} className="w-full">
+                  Submit Answer
+                </Button>
+                 <Button size="lg" onClick={handleSkip} variant="outline" className="w-full sm:w-auto sm:px-8">
+                  Skip
+                </Button>
+              </div>
             )}
             {status === 'verifying' && (
               <Button size="lg" disabled className="w-full">

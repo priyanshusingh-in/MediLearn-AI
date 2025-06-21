@@ -3,8 +3,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Stethoscope, BrainCircuit, Lightbulb, BarChart3, ArrowRight } from 'lucide-react';
-import { ThemeToggle } from './theme-toggle';
+import { BrainCircuit, Lightbulb, BarChart3, ArrowRight } from 'lucide-react';
 
 const features = [
   {
@@ -26,41 +25,30 @@ const features = [
 
 export function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <header className="p-4 flex items-center justify-between gap-2 border-b shadow-sm sticky top-0 bg-background/95 backdrop-blur z-10">
-        <div className="flex items-center gap-2">
-            <Stethoscope className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold text-foreground">MediLearn AI</h1>
-        </div>
-        <div className="flex items-center gap-4">
-            <Link href="/quiz">
-                <Button variant="ghost">Take a Quiz</Button>
-            </Link>
-            <ThemeToggle />
-        </div>
-      </header>
-      
+    <div className="flex flex-col min-h-[calc(100vh-4rem)] bg-background">
       <main className="flex-grow">
         {/* Hero Section */}
         <section className="text-center py-20 px-4 sm:py-28 overflow-hidden">
-          <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl animate-in fade-in slide-in-from-bottom-12 duration-1000 ease-out">
-            Smarter Medical Study, Powered by AI
-          </h2>
-          <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground animate-in fade-in slide-in-from-bottom-12 duration-1000 ease-out delay-200">
-            Stop memorizing, start understanding. MediLearn AI creates dynamic quizzes and personalized feedback to help you master any medical topic.
-          </p>
-          <div className="mt-10 animate-in fade-in slide-in-from-bottom-12 duration-1000 ease-out delay-400">
-            <Link href="/quiz">
-              <Button size="lg" className="group">
-                Start Learning Now <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
+          <div className="container">
+            <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl animate-in fade-in slide-in-from-bottom-12 duration-1000 ease-out">
+              Smarter Medical Study, Powered by AI
+            </h2>
+            <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground animate-in fade-in slide-in-from-bottom-12 duration-1000 ease-out delay-200">
+              Stop memorizing, start understanding. MediLearn AI creates dynamic quizzes and personalized feedback to help you master any medical topic.
+            </p>
+            <div className="mt-10 animate-in fade-in slide-in-from-bottom-12 duration-1000 ease-out delay-400">
+              <Link href="/quiz">
+                <Button size="lg" className="group">
+                  Start Learning Now <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
 
         {/* Features Section */}
         <section className="py-20 px-4 bg-secondary/50 overflow-hidden">
-          <div className="max-w-5xl mx-auto">
+          <div className="container max-w-5xl mx-auto">
             <div className="text-center mb-12 animate-in fade-in slide-in-from-bottom-12 duration-1000 ease-out">
               <h3 className="text-3xl font-bold text-foreground">Why MediLearn AI?</h3>
               <p className="mt-4 text-muted-foreground">An intelligent approach to medical education.</p>

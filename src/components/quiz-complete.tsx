@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle2, Star, Lightbulb } from 'lucide-react';
 import { generateFeedbackAction } from '@/app/actions';
 import { Skeleton } from './ui/skeleton';
+import { useAuth } from '@/context/auth-context';
+import { updateUserQuizStats } from '@/lib/firestore';
 
 interface QuizCompleteProps {
   topic: string;
@@ -16,14 +18,15 @@ interface QuizCompleteProps {
 }
 
 export function QuizComplete({ topic, scores, questions, answers, onRestart }: QuizCompleteProps) {
+  const { user } = useAuth();
   const [feedback, setFeedback] = React.useState<string>('');
   const [isLoading, setIsLoading] = React.useState(true);
 
   const totalScore = scores.reduce((sum, score) => sum + score, 0);
-  const averageScore = scores.length > 0 ? (totalScore / scores.length).toFixed(1) : '0.0';
+  const averageScore = scores.length > 0 ? (totalScore / (scores.length * 10) * 10).toFixed(1) : '0.0';
 
   React.useEffect(() => {
-    const getFeedback = async () => {
+    const getFeedbackAndSaveScore = async () => {
       if (!questions || questions.length === 0) return;
       setIsLoading(true);
       const quizResults = questions.map((q, i) => ({
@@ -31,6 +34,14 @@ export function QuizComplete({ topic, scores, questions, answers, onRestart }: Q
         answer: answers[i] || '',
         score: scores[i] || 0,
       }));
+      
+      // Save score if user is logged in
+      if (user) {
+        const totalQuizScore = scores.reduce((acc, score) => acc + score, 0);
+        const averageQuizScore = scores.length > 0 ? totalQuizScore / scores.length : 0;
+        await updateUserQuizStats(user.uid, averageQuizScore);
+      }
+      
       try {
         const result = await generateFeedbackAction({ topic, results: quizResults });
         setFeedback(result.feedback);
@@ -40,8 +51,8 @@ export function QuizComplete({ topic, scores, questions, answers, onRestart }: Q
         setIsLoading(false);
       }
     };
-    getFeedback();
-  }, [topic, questions, answers, scores]);
+    getFeedbackAndSaveScore();
+  }, [topic, questions, answers, scores, user]);
 
   const renderFeedback = () => {
     if (isLoading) {
@@ -58,7 +69,6 @@ export function QuizComplete({ topic, scores, questions, answers, onRestart }: Q
     }
 
     const formattedFeedback = feedback.split('\n').map((line, index) => {
-      // First, replace any markdown bolding with strong tags.
       const boldedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
       if (boldedLine.startsWith('# ')) {

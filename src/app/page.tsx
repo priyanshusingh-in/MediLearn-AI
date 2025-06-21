@@ -1,5 +1,5 @@
-import { QuizApp } from '@/components/quiz-app';
+import { HomePage } from '@/components/home-page';
 
 export default function Home() {
-  return <QuizApp />;
+  return <HomePage />;
 }

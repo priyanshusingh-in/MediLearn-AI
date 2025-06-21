@@ -93,8 +93,8 @@ export function QuizView({ topic, questions, onFinish, onExit }: QuizViewProps) 
       </div>
 
       <Card className="w-full shadow-xl">
-        <CardHeader>
-            <p className="text-xl font-semibold leading-relaxed text-foreground">
+        <CardHeader key={currentIndex}>
+            <p className="text-xl font-semibold leading-relaxed text-foreground animate-in fade-in duration-500">
                 {currentQuestion}
             </p>
         </CardHeader>

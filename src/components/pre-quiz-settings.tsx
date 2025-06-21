@@ -91,109 +91,117 @@ export function PreQuizSettings({ topic, onSubmit, onBack }: PreQuizSettingsProp
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="preparationContext"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-base">What are you preparing for? (Optional)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., USMLE Step 1" {...field} />
-                  </FormControl>
-                   <div className="flex flex-wrap items-center gap-2 pt-2">
-                    {preparationSuggestions.map((suggestion) => (
-                      <Button
-                        key={suggestion}
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="h-auto px-3 py-1 text-sm"
-                        onClick={() => form.setValue('preparationContext', suggestion, { shouldValidate: true })}
+            <div className="animate-in fade-in slide-in-from-bottom-8 duration-500 ease-out delay-100">
+              <FormField
+                control={form.control}
+                name="preparationContext"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base">What are you preparing for? (Optional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., USMLE Step 1" {...field} />
+                    </FormControl>
+                    <div className="flex flex-wrap items-center gap-2 pt-2">
+                      {preparationSuggestions.map((suggestion) => (
+                        <Button
+                          key={suggestion}
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="h-auto px-3 py-1 text-sm"
+                          onClick={() => form.setValue('preparationContext', suggestion, { shouldValidate: true })}
+                        >
+                          {suggestion}
+                        </Button>
+                      ))}
+                    </div>
+                    <FormDescription>
+                      Providing context helps us tailor the difficulty and style of questions.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="animate-in fade-in slide-in-from-bottom-8 duration-500 ease-out delay-200">
+              <FormField
+                control={form.control}
+                name="questionType"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel className="text-base">Preferred Question Type</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2"
                       >
-                        {suggestion}
-                      </Button>
-                    ))}
-                  </div>
-                  <FormDescription>
-                    Providing context helps us tailor the difficulty and style of questions.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="questionType"
-              render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel className="text-base">Preferred Question Type</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2"
-                    >
-                      {questionTypes.map((type) => (
-                        <div key={type.value}>
-                          <RadioGroupItem value={type.value} id={type.value} className="sr-only" />
-                          <Label
-                            htmlFor={type.value}
-                            className={cn(
-                              'flex h-full flex-col justify-between rounded-md border-2 border-muted bg-popover p-4 transition-transform hover:-translate-y-1 cursor-pointer',
-                              field.value === type.value && 'border-primary'
-                            )}
-                          >
-                            <span className="mb-3 font-bold tracking-tight text-foreground">{type.title}</span>
-                            <span className="text-sm text-muted-foreground">{type.description}</span>
-                          </Label>
-                        </div>
-                      ))}
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="numberOfQuestions"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-base">Number of Questions</FormLabel>
-                   <FormControl>
-                    <RadioGroup
-                      onValueChange={(value) => field.onChange(parseInt(value, 10))}
-                      defaultValue={String(field.value)}
-                      className="flex flex-wrap items-center gap-4 pt-2"
-                    >
-                      {questionCountOptions.map((count) => (
-                        <FormItem key={count} className="flex items-center space-y-0">
-                           <FormControl>
-                            <RadioGroupItem value={String(count)} id={`count-${count}`} className="sr-only" />
-                          </FormControl>
-                          <Label
-                            htmlFor={`count-${count}`}
-                            className={cn(
-                              'flex h-10 cursor-pointer items-center justify-center rounded-md border-2 border-muted bg-popover px-4 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
-                              field.value === count && 'border-primary'
-                            )}
-                          >
-                            {count}
-                          </Label>
-                        </FormItem>
-                      ))}
-                    </RadioGroup>
-                  </FormControl>
-                  <FormDescription>
-                    Choose how many questions you want in your quiz.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" size="lg" className="w-full">
-              Generate My Quiz
-            </Button>
+                        {questionTypes.map((type) => (
+                          <div key={type.value}>
+                            <RadioGroupItem value={type.value} id={type.value} className="sr-only" />
+                            <Label
+                              htmlFor={type.value}
+                              className={cn(
+                                'flex h-full flex-col justify-between rounded-md border-2 border-muted bg-popover p-4 transition-transform hover:-translate-y-1 cursor-pointer',
+                                field.value === type.value && 'border-primary'
+                              )}
+                            >
+                              <span className="mb-3 font-bold tracking-tight text-foreground">{type.title}</span>
+                              <span className="text-sm text-muted-foreground">{type.description}</span>
+                            </Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="animate-in fade-in slide-in-from-bottom-8 duration-500 ease-out delay-300">
+              <FormField
+                control={form.control}
+                name="numberOfQuestions"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base">Number of Questions</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={(value) => field.onChange(parseInt(value, 10))}
+                        defaultValue={String(field.value)}
+                        className="flex flex-wrap items-center gap-4 pt-2"
+                      >
+                        {questionCountOptions.map((count) => (
+                          <FormItem key={count} className="flex items-center space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value={String(count)} id={`count-${count}`} className="sr-only" />
+                            </FormControl>
+                            <Label
+                              htmlFor={`count-${count}`}
+                              className={cn(
+                                'flex h-10 cursor-pointer items-center justify-center rounded-md border-2 border-muted bg-popover px-4 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
+                                field.value === count && 'border-primary'
+                              )}
+                            >
+                              {count}
+                            </Label>
+                          </FormItem>
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
+                    <FormDescription>
+                      Choose how many questions you want in your quiz.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="animate-in fade-in slide-in-from-bottom-8 duration-500 ease-out delay-400">
+              <Button type="submit" size="lg" className="w-full">
+                Generate My Quiz
+              </Button>
+            </div>
           </form>
         </Form>
       </CardContent>

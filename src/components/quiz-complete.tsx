@@ -84,8 +84,8 @@ export function QuizComplete({ topic, scores, questions, answers, onRestart }: Q
   };
 
   return (
-    <div className="w-full max-w-2xl flex flex-col gap-6 animate-in fade-in duration-500">
-      <Card className="w-full text-center shadow-xl border-0">
+    <div className="w-full max-w-2xl flex flex-col gap-6">
+      <Card className="w-full text-center shadow-xl border-0 animate-in fade-in slide-in-from-top-12 duration-500 ease-out">
         <CardHeader>
           <div className="mx-auto bg-primary/10 rounded-full p-3 w-fit mb-4">
               <CheckCircle2 className="h-12 w-12 text-primary" />
@@ -110,7 +110,7 @@ export function QuizComplete({ topic, scores, questions, answers, onRestart }: Q
         </CardContent>
       </Card>
 
-      <Card className="w-full shadow-xl border-0">
+      <Card className="w-full shadow-xl border-0 animate-in fade-in slide-in-from-top-12 duration-500 ease-out delay-200">
         <CardHeader>
             <div className="flex items-center gap-3">
                 <div className="bg-primary/10 rounded-full p-2">

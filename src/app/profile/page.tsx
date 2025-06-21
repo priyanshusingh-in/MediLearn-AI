@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/auth-context';
 import { getUserProfile, type UserProfile } from '@/lib/firestore';
 import { Header } from '@/components/header';
@@ -12,15 +12,16 @@ import { Loader2, Star, BookOpen } from 'lucide-react';
 export default function ProfilePage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!authLoading && !user) {
-      sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
+      sessionStorage.setItem('redirectAfterLogin', pathname);
       router.push('/signin');
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, pathname]);
 
   useEffect(() => {
     if (user) {

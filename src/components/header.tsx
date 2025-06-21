@@ -27,6 +27,12 @@ export function Header() {
     router.push('/');
   };
 
+  const handleSignIn = () => {
+    // When signing in from the header, the default destination is the quiz page.
+    sessionStorage.setItem('redirectAfterLogin', '/quiz');
+    router.push('/signin');
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 shadow-sm backdrop-blur">
       <div className="container flex h-16 items-center">
@@ -75,7 +81,7 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button onClick={() => router.push('/signin')}>Sign In</Button>
+              <Button onClick={handleSignIn}>Sign In</Button>
             )}
           </nav>
         </div>

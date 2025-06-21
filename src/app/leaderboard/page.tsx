@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/auth-context';
 import { getLeaderboard, type UserProfile } from '@/lib/firestore';
 import { Header } from '@/components/header';
@@ -13,15 +13,16 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 export default function LeaderboardPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
     const [leaderboard, setLeaderboard] = useState<UserProfile[]>([]);
     const [loading, setLoading] = useState(true);
   
     useEffect(() => {
       if (!authLoading && !user) {
-        sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
+        sessionStorage.setItem('redirectAfterLogin', pathname);
         router.push('/signin');
       }
-    }, [user, authLoading, router]);
+    }, [user, authLoading, router, pathname]);
   
     useEffect(() => {
       if(user) {

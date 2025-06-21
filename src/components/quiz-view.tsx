@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { X, Loader2 } from 'lucide-react';
@@ -74,12 +74,14 @@ export function QuizView({ topic, questions, onFinish, onExit }: QuizViewProps) 
         </Button>
       </div>
 
-      <Card className="w-full flex flex-col p-6 shadow-xl">
-        <CardContent className="flex flex-col flex-grow">
-          <p className="text-xl font-semibold leading-relaxed text-foreground mb-4">
-            {currentQuestion}
-          </p>
-          <div className="relative flex-grow min-h-[150px]">
+      <Card className="w-full shadow-xl">
+        <CardHeader>
+            <p className="text-xl font-semibold leading-relaxed text-foreground">
+                {currentQuestion}
+            </p>
+        </CardHeader>
+        <CardContent>
+          <div className="relative min-h-[150px]">
             <Textarea
               placeholder="Type your answer here (25-50 words)..."
               value={currentAnswer}
@@ -92,6 +94,26 @@ export function QuizView({ topic, questions, onFinish, onExit }: QuizViewProps) 
             </div>
           </div>
         </CardContent>
+        <CardFooter>
+          <div className="w-full">
+            {status === 'unverified' && (
+              <Button size="lg" onClick={handleSubmit} disabled={wordCount < 25 || wordCount > 50} className="w-full">
+                Submit Answer
+              </Button>
+            )}
+            {status === 'verifying' && (
+              <Button size="lg" disabled className="w-full">
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Verifying...
+              </Button>
+            )}
+            {status === 'verified' && (
+              <Button size="lg" onClick={handleNext} className="w-full">
+                {currentIndex < questions.length - 1 ? 'Next Question' : 'Finish Quiz'}
+              </Button>
+            )}
+          </div>
+        </CardFooter>
       </Card>
       
       <div className="w-full min-h-[160px]">
@@ -109,25 +131,6 @@ export function QuizView({ topic, questions, onFinish, onExit }: QuizViewProps) 
               <p className="text-sm text-foreground/80">{result.feedback}</p>
             </CardContent>
           </Card>
-        )}
-      </div>
-
-      <div className="mt-4 w-full max-w-sm">
-        {status === 'unverified' && (
-          <Button size="lg" onClick={handleSubmit} disabled={wordCount < 25 || wordCount > 50} className="w-full">
-            Submit Answer
-          </Button>
-        )}
-        {status === 'verifying' && (
-          <Button size="lg" disabled className="w-full">
-            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            Verifying...
-          </Button>
-        )}
-        {status === 'verified' && (
-          <Button size="lg" onClick={handleNext} className="w-full">
-            {currentIndex < questions.length - 1 ? 'Next Question' : 'Finish Quiz'}
-          </Button>
         )}
       </div>
     </div>

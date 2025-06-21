@@ -19,7 +19,7 @@ export default function SigninPage() {
     }
   }, [user, loading, router]);
 
-  if (loading || user) {
+  if (loading || (!loading && user)) {
     return (
       <div className="flex min-h-screen w-full items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />

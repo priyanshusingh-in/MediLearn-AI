@@ -3,7 +3,6 @@
 import type { LucideIcon } from 'lucide-react';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
 
 export interface MedicalTopic {
   name: string;
@@ -36,16 +35,10 @@ export function SubjectSelector({
           )}
         >
           <CardHeader className="flex flex-col items-center justify-center p-4 text-center">
-            <div className="relative h-24 w-full mb-2 overflow-hidden rounded-md">
-                 <Image
-                    src={`https://placehold.co/400x300.png`}
-                    alt={topic.name}
-                    data-ai-hint={topic.dataHint}
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 transition-colors duration-300 group-hover:bg-accent">
+              <topic.icon className="h-8 w-8 text-primary transition-colors duration-300 group-hover:text-accent-foreground" />
             </div>
-            <CardTitle className="text-base font-semibold text-foreground mt-2">
+            <CardTitle className="text-base font-semibold text-foreground">
               {topic.name}
             </CardTitle>
           </CardHeader>

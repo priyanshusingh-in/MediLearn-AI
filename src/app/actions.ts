@@ -10,6 +10,11 @@ import {
   type VerifyAnswerInput,
   type VerifyAnswerOutput,
 } from '@/ai/flows/verify-answer-flow';
+import {
+  generateFeedback,
+  type GenerateFeedbackInput,
+  type GenerateFeedbackOutput,
+} from '@/ai/flows/generate-feedback-flow';
 
 export async function getQuestions(
   input: GeneratePersonalizedQuestionsInput
@@ -34,5 +39,18 @@ export async function verifyAnswerAction(
     console.error('Error verifying answer:', error);
     // Return a structured error
     return { score: 0, feedback: 'There was an error verifying your answer. Please try again.' };
+  }
+}
+
+export async function generateFeedbackAction(
+  input: GenerateFeedbackInput
+): Promise<GenerateFeedbackOutput> {
+  try {
+    const result = await generateFeedback(input);
+    return result;
+  } catch (error) {
+    console.error('Error generating feedback:', error);
+    // Return a structured error
+    return { feedback: 'There was an error generating your feedback. Please try again.' };
   }
 }

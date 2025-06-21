@@ -35,6 +35,7 @@ export function QuizApp() {
   const [selectedTopic, setSelectedTopic] = React.useState<MedicalTopic | null>(null);
   const [questions, setQuestions] = React.useState<string[]>([]);
   const [finalScores, setFinalScores] = React.useState<number[]>([]);
+  const [userAnswers, setUserAnswers] = React.useState<string[]>([]);
   const [error, setError] = React.useState<string | null>(null);
 
   const handleTopicSelect = (topic: MedicalTopic) => {
@@ -65,8 +66,9 @@ export function QuizApp() {
     }
   };
 
-  const handleQuizFinish = (scores: number[]) => {
+  const handleQuizFinish = (scores: number[], answers: string[]) => {
     setFinalScores(scores);
+    setUserAnswers(answers);
     setQuizState('finished');
   };
 
@@ -79,6 +81,7 @@ export function QuizApp() {
     setSelectedTopic(null);
     setQuestions([]);
     setFinalScores([]);
+    setUserAnswers([]);
     setError(null);
   };
 
@@ -110,7 +113,12 @@ export function QuizApp() {
           />
         );
       case 'finished':
-        return <QuizComplete topic={selectedTopic!.name} scores={finalScores} onRestart={handleRestart} />;
+        return <QuizComplete 
+                  topic={selectedTopic!.name} 
+                  scores={finalScores} 
+                  questions={questions}
+                  answers={userAnswers}
+                  onRestart={handleRestart} />;
       case 'error':
         return (
           <div className="w-full max-w-md">

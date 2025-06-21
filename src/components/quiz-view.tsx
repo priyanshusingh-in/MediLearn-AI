@@ -12,7 +12,7 @@ import { Badge } from './ui/badge';
 interface QuizViewProps {
   topic: string;
   questions: string[];
-  onFinish: (scores: number[]) => void;
+  onFinish: (scores: number[], answers: string[]) => void;
   onExit: () => void;
 }
 
@@ -29,6 +29,7 @@ export function QuizView({ topic, questions, onFinish, onExit }: QuizViewProps) 
   const [status, setStatus] = React.useState<VerificationStatus>('unverified');
   const [result, setResult] = React.useState<VerificationResult | null>(null);
   const [scores, setScores] = React.useState<number[]>([]);
+  const [answers, setAnswers] = React.useState<string[]>([]);
 
   const currentQuestion = questions[currentIndex];
 
@@ -39,6 +40,7 @@ export function QuizView({ topic, questions, onFinish, onExit }: QuizViewProps) 
     const verificationResult = await verifyAnswerAction({ question: currentQuestion, answer: currentAnswer });
     setResult(verificationResult);
     setScores([...scores, verificationResult.score]);
+    setAnswers([...answers, currentAnswer]);
     setStatus('verified');
   };
 
@@ -49,7 +51,7 @@ export function QuizView({ topic, questions, onFinish, onExit }: QuizViewProps) 
       setCurrentAnswer('');
       setResult(null);
     } else {
-      onFinish(scores);
+      onFinish(scores, answers);
     }
   };
   

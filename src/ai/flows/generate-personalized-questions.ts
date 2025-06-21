@@ -18,6 +18,7 @@ const GeneratePersonalizedQuestionsInputSchema = z.object({
   topic: z.string().describe('The medical topic to generate questions for.'),
   preparationContext: z.string().describe("The context for which the user is preparing (e.g., exam name, learning goal)."),
   questionType: z.string().describe("The preferred type of questions (e.g., Conceptual, Case-based)."),
+  numberOfQuestions: z.number().describe('The number of questions to generate.'),
 });
 export type GeneratePersonalizedQuestionsInput = z.infer<typeof GeneratePersonalizedQuestionsInputSchema>;
 
@@ -44,7 +45,7 @@ const generatePersonalizedQuestionsPrompt = ai.definePrompt({
   output: {schema: GeneratePersonalizedQuestionsOutputSchema},
   prompt: `You are an expert medical educator creating a personalized quiz.
 
-Generate a set of 5 challenging study questions based on the following criteria:
+Generate a set of {{{numberOfQuestions}}} challenging study questions based on the following criteria:
 
 - Medical Topic: {{{topic}}}
 - User's Preparation Goal: {{{preparationContext}}}

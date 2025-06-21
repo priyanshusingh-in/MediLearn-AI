@@ -21,6 +21,7 @@ import type { MedicalTopic } from './subject-selector';
 import { ArrowLeft } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { Slider } from './ui/slider';
 
 
 const formSchema = z.object({
@@ -30,6 +31,7 @@ const formSchema = z.object({
   questionType: z.string({
     required_error: 'Please select a question type.',
   }),
+  numberOfQuestions: z.number().min(3).max(10),
 });
 
 export type PreQuizSettingsData = z.infer<typeof formSchema>;
@@ -64,6 +66,7 @@ export function PreQuizSettings({ topic, onSubmit, onBack }: PreQuizSettingsProp
     defaultValues: {
       preparationContext: '',
       questionType: 'Conceptual Understanding',
+      numberOfQuestions: 5,
     },
   });
 
@@ -128,6 +131,32 @@ export function PreQuizSettings({ topic, onSubmit, onBack }: PreQuizSettingsProp
                       ))}
                     </RadioGroup>
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="numberOfQuestions"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">Number of Questions</FormLabel>
+                   <FormControl>
+                     <div className="flex items-center gap-4 pt-2">
+                        <Slider
+                            defaultValue={[field.value]}
+                            min={3}
+                            max={10}
+                            step={1}
+                            onValueChange={(value) => field.onChange(value[0])}
+                            className="flex-1"
+                        />
+                        <span className="font-bold text-lg text-primary w-10 text-center p-2 rounded-md bg-muted">{field.value}</span>
+                     </div>
+                  </FormControl>
+                  <FormDescription>
+                    Choose how many questions you want in your quiz (from 3 to 10).
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

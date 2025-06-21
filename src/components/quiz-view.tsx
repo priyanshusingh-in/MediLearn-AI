@@ -83,7 +83,7 @@ export function QuizView({ topic, questions, onFinish, onExit }: QuizViewProps) 
         <CardContent>
           <div className="relative min-h-[150px]">
             <Textarea
-              placeholder="Type your answer here (25-50 words)..."
+              placeholder="Type your answer here (minimum 25 words)..."
               value={currentAnswer}
               onChange={(e) => setCurrentAnswer(e.target.value)}
               className="h-full resize-none"
@@ -97,7 +97,7 @@ export function QuizView({ topic, questions, onFinish, onExit }: QuizViewProps) 
         <CardFooter>
           <div className="w-full">
             {status === 'unverified' && (
-              <Button size="lg" onClick={handleSubmit} disabled={wordCount < 25 || wordCount > 50} className="w-full">
+              <Button size="lg" onClick={handleSubmit} disabled={wordCount < 25} className="w-full">
                 Submit Answer
               </Button>
             )}

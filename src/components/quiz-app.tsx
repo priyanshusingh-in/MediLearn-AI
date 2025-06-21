@@ -32,6 +32,7 @@ export function QuizApp() {
   const [quizState, setQuizState] = React.useState<QuizState>('selecting');
   const [selectedTopic, setSelectedTopic] = React.useState<MedicalTopic | null>(null);
   const [questions, setQuestions] = React.useState<string[]>([]);
+  const [finalScores, setFinalScores] = React.useState<number[]>([]);
   const [error, setError] = React.useState<string | null>(null);
 
   const handleTopicSelect = (topic: MedicalTopic) => {
@@ -43,7 +44,8 @@ export function QuizApp() {
     setQuizState('loading');
     setError(null);
     try {
-      const result = await getQuestions(selectedTopic.name);
+      const uniqueTopic = `${selectedTopic.name} - ${Math.random()}`;
+      const result = await getQuestions(uniqueTopic);
       if (result.questions && result.questions.length > 0) {
         setQuestions(result.questions);
         setQuizState('active');
@@ -57,7 +59,8 @@ export function QuizApp() {
     }
   };
 
-  const handleQuizFinish = () => {
+  const handleQuizFinish = (scores: number[]) => {
+    setFinalScores(scores);
     setQuizState('finished');
   };
 
@@ -65,6 +68,7 @@ export function QuizApp() {
     setQuizState('selecting');
     setSelectedTopic(null);
     setQuestions([]);
+    setFinalScores([]);
     setError(null);
   };
 
@@ -88,7 +92,7 @@ export function QuizApp() {
           />
         );
       case 'finished':
-        return <QuizComplete topic={selectedTopic!.name} onRestart={handleRestart} />;
+        return <QuizComplete topic={selectedTopic!.name} scores={finalScores} onRestart={handleRestart} />;
       case 'error':
         return (
           <div className="w-full max-w-md">

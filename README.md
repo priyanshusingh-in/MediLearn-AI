@@ -2,8 +2,6 @@
 
 MediLearn AI is an intelligent, AI-powered study platform designed to help medical students and professionals master complex topics through personalized learning experiences. It leverages generative AI to create dynamic quizzes, provide detailed feedback, and track user progress.
 
-![MediLearn AI Screenshot](https://placehold.co/600x400.png)
-
 ## Core Features
 
 *   **Personalized Quiz Generation**: Creates custom quizzes based on a chosen medical topic, preparation context (e.g., "USMLE Step 1"), preferred question style (Conceptual, Case-based, etc.), and length.

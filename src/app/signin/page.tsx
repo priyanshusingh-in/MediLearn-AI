@@ -1,8 +1,26 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/auth-context';
 import { SigninForm } from '@/components/signin-form';
 import Link from 'next/link';
 import { Stethoscope } from 'lucide-react';
 
 export default function SigninPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push('/quiz');
+    }
+  }, [user, loading, router]);
+
+  if (loading || user) {
+    return null;
+  }
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">

@@ -1,12 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithRedirect, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { getOrCreateUserProfile } from '@/lib/firestore';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 
 function GoogleIcon() {
@@ -21,24 +18,15 @@ function GoogleIcon() {
 }
 
 export function SigninForm() {
-  const router = useRouter();
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState(false);
 
   const handleSignIn = async () => {
     setIsLoading(true);
     const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(auth, provider);
-      await getOrCreateUserProfile(result.user);
-      toast({ title: "Success", description: "You're signed in successfully." });
-      router.push('/quiz');
+      await signInWithRedirect(auth, provider);
     } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Authentication Failed',
-        description: error.message || 'Could not sign you in with Google. Please try again.',
-      });
+      console.error("Sign in error", error);
       setIsLoading(false);
     }
   };

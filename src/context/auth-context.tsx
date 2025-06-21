@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import { getOrCreateUserProfile } from '@/lib/firestore';
 import { Loader2 } from 'lucide-react';
 
 interface AuthContextType {
@@ -20,7 +21,10 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        await getOrCreateUserProfile(user);
+      }
       setUser(user);
       setLoading(false);
     });

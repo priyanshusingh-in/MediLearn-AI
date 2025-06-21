@@ -13,9 +13,11 @@ export default function QuizPage() {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!loading && !user) {
-      sessionStorage.setItem('redirectAfterLogin', pathname);
-      router.push('/signin');
+    if (!loading) {
+      if (!user) {
+        sessionStorage.setItem('redirectAfterLogin', pathname);
+        router.push('/signin');
+      }
     }
   }, [user, loading, router, pathname]);
 

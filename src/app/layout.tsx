@@ -3,6 +3,12 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthContextProvider } from '@/context/auth-context';
 import { Toaster } from '@/components/ui/toaster';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-body',
+});
 
 export const metadata: Metadata = {
   title: 'MediLearn AI',
@@ -15,12 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
-      </head>
+    <html lang="en" suppressHydrationWarning className={inter.variable}>
+      <head />
       <body className="font-body antialiased">
         <ThemeProvider
           attribute="class"

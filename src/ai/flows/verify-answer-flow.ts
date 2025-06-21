@@ -35,15 +35,19 @@ const verifyAnswerPrompt = ai.definePrompt({
   name: 'verifyAnswerPrompt',
   input: {schema: VerifyAnswerInputSchema},
   output: {schema: VerifyAnswerOutputSchema},
-  prompt: `You are a medical expert evaluating a student's answer to a quiz question.
-The user was asked to provide an answer between 25 and 50 words.
+  prompt: `You are a fair and knowledgeable medical professor grading a student's quiz answer.
+The student was required to answer in 25 to 50 words. This is a test of both knowledge and conciseness.
 
+Here is the question and the student's answer:
 Question: "{{{question}}}"
 Student's Answer: "{{{answer}}}"
 
-Please evaluate the student's answer. Provide a score from 0 to 10, where 10 is a perfect answer.
-Also, provide constructive feedback explaining the rationale for your score. The feedback should be concise and helpful for learning.
-If the answer is too short or too long, penalize the score.
+Your task is to:
+1. Evaluate the medical accuracy of the answer. This is the most important factor.
+2. Consider the conciseness. Did the student convey the key information effectively within the word limit?
+3. Provide a score from 0 to 10. A score of 10 represents a perfect, accurate, and concise answer. A score of 0 means the answer is completely incorrect.
+4. Provide constructive feedback. The feedback should clearly explain why you gave that score. If the answer is good but incomplete due to the word limit, acknowledge this. For example: "This is a great, concise answer covering the main points. To be more comprehensive, you could also mention X, but this is excellent for the word count." If the answer is inaccurate, gently correct the student and explain the correct concepts.
+5. If the answer is significantly outside the 25-50 word range, you should penalize the score accordingly, and mention this in the feedback.
 `,
 });
 

@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -43,14 +42,14 @@ export function HomePage() {
       
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="text-center py-20 px-4 sm:py-28">
-          <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
+        <section className="text-center py-20 px-4 sm:py-28 overflow-hidden">
+          <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl animate-in fade-in slide-in-from-bottom-12 duration-1000 ease-out">
             Smarter Medical Study, Powered by AI
           </h2>
-          <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
+          <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground animate-in fade-in slide-in-from-bottom-12 duration-1000 ease-out delay-200">
             Stop memorizing, start understanding. MediLearn AI creates dynamic quizzes and personalized feedback to help you master any medical topic.
           </p>
-          <div className="mt-10">
+          <div className="mt-10 animate-in fade-in slide-in-from-bottom-12 duration-1000 ease-out delay-400">
             <Link href="/quiz">
               <Button size="lg" className="group">
                 Start Learning Now <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -60,25 +59,27 @@ export function HomePage() {
         </section>
 
         {/* Features Section */}
-        <section className="py-20 px-4 bg-secondary/50">
+        <section className="py-20 px-4 bg-secondary/50 overflow-hidden">
           <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-12">
+            <div className="text-center mb-12 animate-in fade-in slide-in-from-bottom-12 duration-1000 ease-out">
               <h3 className="text-3xl font-bold text-foreground">Why MediLearn AI?</h3>
               <p className="mt-4 text-muted-foreground">An intelligent approach to medical education.</p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
-              {features.map((feature) => (
-                <Card key={feature.title} className="text-center border-0 shadow-lg hover:shadow-xl transition-shadow">
-                  <CardHeader>
-                    <div className="mx-auto bg-primary/10 rounded-full p-4 w-fit mb-4">
-                      {feature.icon}
-                    </div>
-                    <CardTitle>{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">{feature.description}</p>
-                  </CardContent>
-                </Card>
+              {features.map((feature, i) => (
+                <div key={feature.title} className="animate-in fade-in slide-in-from-bottom-12 duration-1000 ease-out" style={{ animationDelay: `${200 * (i + 1)}ms` }}>
+                  <Card className="text-center border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                    <CardHeader>
+                      <div className="mx-auto bg-primary/10 rounded-full p-4 w-fit mb-4">
+                        {feature.icon}
+                      </div>
+                      <CardTitle>{feature.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground">{feature.description}</p>
+                    </CardContent>
+                  </Card>
+                </div>
               ))}
             </div>
           </div>

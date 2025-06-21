@@ -23,9 +23,7 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
-  preparationContext: z.string().min(3, {
-    message: 'Please provide some context for your preparation.',
-  }).max(100),
+  preparationContext: z.string().max(100),
   questionType: z.string({
     required_error: 'Please select a question type.',
   }),
@@ -60,6 +58,13 @@ const questionTypes = [
 
 const questionCountOptions = [5, 10, 15, 20];
 
+const preparationSuggestions = [
+  'Final Exams',
+  'Board Certification',
+  'Clinical Rotations',
+  'General Knowledge',
+];
+
 export function PreQuizSettings({ topic, onSubmit, onBack }: PreQuizSettingsProps) {
   const form = useForm<PreQuizSettingsData>({
     resolver: zodResolver(formSchema),
@@ -91,12 +96,26 @@ export function PreQuizSettings({ topic, onSubmit, onBack }: PreQuizSettingsProp
               name="preparationContext"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base">What are you preparing for?</FormLabel>
+                  <FormLabel className="text-base">What are you preparing for? (Optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., USMLE Step 1, final exams" {...field} />
+                    <Input placeholder="e.g., USMLE Step 1" {...field} />
                   </FormControl>
+                   <div className="flex flex-wrap items-center gap-2 pt-2">
+                    {preparationSuggestions.map((suggestion) => (
+                      <Button
+                        key={suggestion}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-auto px-3 py-1 text-sm"
+                        onClick={() => form.setValue('preparationContext', suggestion, { shouldValidate: true })}
+                      >
+                        {suggestion}
+                      </Button>
+                    ))}
+                  </div>
                   <FormDescription>
-                    This helps us tailor the difficulty and style of questions.
+                    Providing context helps us tailor the difficulty and style of questions.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

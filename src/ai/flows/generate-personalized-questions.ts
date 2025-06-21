@@ -48,10 +48,16 @@ const generatePersonalizedQuestionsPrompt = ai.definePrompt({
 Generate a set of {{{numberOfQuestions}}} challenging study questions based on the following criteria:
 
 - Medical Topic: {{{topic}}}
+{{#if preparationContext}}
 - User's Preparation Goal: {{{preparationContext}}}
+{{/if}}
 - Preferred Question Style: {{{questionType}}}
 
+{{#if preparationContext}}
 The questions should be highly relevant for a medical student preparing for "{{{preparationContext}}}".
+{{else}}
+The questions should be of a general nature for the selected topic.
+{{/if}}
 Tailor the questions to match the requested style: "{{{questionType}}}". For example, if they ask for case-based questions, create short clinical vignettes.
 
 Return the questions as a JSON array of strings.`,

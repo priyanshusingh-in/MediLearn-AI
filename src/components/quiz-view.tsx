@@ -74,12 +74,12 @@ export function QuizView({ topic, questions, onFinish, onExit }: QuizViewProps) 
         </Button>
       </div>
 
-      <Card className="w-full min-h-[450px] flex flex-col p-6 shadow-xl">
+      <Card className="w-full flex flex-col p-6 shadow-xl">
         <CardContent className="flex flex-col flex-grow">
           <p className="text-xl font-semibold leading-relaxed text-foreground mb-4">
             {currentQuestion}
           </p>
-          <div className="relative flex-grow">
+          <div className="relative flex-grow min-h-[150px]">
             <Textarea
               placeholder="Type your answer here (25-50 words)..."
               value={currentAnswer}
@@ -94,23 +94,25 @@ export function QuizView({ topic, questions, onFinish, onExit }: QuizViewProps) 
         </CardContent>
       </Card>
       
-      {status === 'verified' && result && (
-        <Card className="mt-4 w-full bg-secondary/50">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between text-lg">
-              <span>Result</span>
-              <Badge variant={result.score >= 7 ? 'default' : 'destructive'} className={result.score >= 7 ? 'bg-primary' : ''}>
-                Score: {result.score} / 10
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">{result.feedback}</p>
-          </CardContent>
-        </Card>
-      )}
+      <div className="w-full min-h-[160px]">
+        {status === 'verified' && result && (
+          <Card className="mt-4 w-full bg-secondary/50 animate-in fade-in slide-in-from-top-4 duration-500">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between text-lg">
+                <span>Result</span>
+                <Badge variant={result.score >= 7 ? 'default' : 'destructive'}>
+                  Score: {result.score} / 10
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-foreground/80">{result.feedback}</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
 
-      <div className="mt-8 w-full max-w-sm">
+      <div className="mt-4 w-full max-w-sm">
         {status === 'unverified' && (
           <Button size="lg" onClick={handleSubmit} disabled={wordCount < 25 || wordCount > 50} className="w-full">
             Submit Answer

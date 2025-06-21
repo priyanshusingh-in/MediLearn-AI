@@ -135,14 +135,14 @@ export function QuizApp() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="p-4 flex items-center gap-2">
+      <header className="p-4 flex items-center gap-2 border-b">
         <BrainCircuit className="h-8 w-8 text-primary" />
         <h1 className="text-2xl font-bold text-foreground">MediLearn AI</h1>
       </header>
       <main className="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8">
         {renderContent()}
       </main>
-      <footer className="text-center p-4 text-sm text-muted-foreground">
+      <footer className="text-center p-4 text-xs text-muted-foreground/80">
         <p>Powered by AI for a smarter way to learn medicine.</p>
       </footer>
     </div>

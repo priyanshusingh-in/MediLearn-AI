@@ -16,6 +16,7 @@ import { QuizView } from './quiz-view';
 import { QuizComplete } from './quiz-complete';
 import { Button } from './ui/button';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { PreQuizSettings, type PreQuizSettingsData } from './pre-quiz-settings';
 
 const medicalTopics: MedicalTopic[] = [
   { name: 'Cardiology', icon: HeartPulse, dataHint: "heart anatomy" },
@@ -26,7 +27,7 @@ const medicalTopics: MedicalTopic[] = [
   { name: 'Orthopedics', icon: Bone, dataHint: "human skeleton" },
 ];
 
-type QuizState = 'selecting' | 'loading' | 'active' | 'finished' | 'error';
+type QuizState = 'selecting' | 'pre-quiz' | 'loading' | 'active' | 'finished' | 'error';
 
 export function QuizApp() {
   const [quizState, setQuizState] = React.useState<QuizState>('selecting');
@@ -39,13 +40,16 @@ export function QuizApp() {
     setSelectedTopic(topic);
   };
 
-  const handleStartQuiz = async () => {
+  const handleStartQuiz = async (settings: PreQuizSettingsData) => {
     if (!selectedTopic) return;
     setQuizState('loading');
     setError(null);
     try {
-      const uniqueTopic = `${selectedTopic.name} - ${Math.random()}`;
-      const result = await getQuestions(uniqueTopic);
+      const result = await getQuestions({
+        topic: selectedTopic.name,
+        preparationContext: settings.preparationContext,
+        questionType: settings.questionType,
+      });
       if (result.questions && result.questions.length > 0) {
         setQuestions(result.questions);
         setQuizState('active');
@@ -64,6 +68,10 @@ export function QuizApp() {
     setQuizState('finished');
   };
 
+  const handleBackToSelect = () => {
+    setQuizState('selecting');
+  }
+
   const handleRestart = () => {
     setQuizState('selecting');
     setSelectedTopic(null);
@@ -81,6 +89,14 @@ export function QuizApp() {
             <p className="text-lg font-semibold">Generating your personalized quiz...</p>
             <p className="text-muted-foreground">This may take a moment.</p>
           </div>
+        );
+      case 'pre-quiz':
+        return (
+            <PreQuizSettings
+                topic={selectedTopic!}
+                onSubmit={handleStartQuiz}
+                onBack={handleBackToSelect}
+            />
         );
       case 'active':
         return (
@@ -122,11 +138,11 @@ export function QuizApp() {
             />
             <Button
               size="lg"
-              onClick={handleStartQuiz}
+              onClick={() => setQuizState('pre-quiz')}
               disabled={!selectedTopic}
               className="mt-8 transition-all duration-300"
             >
-              Start Quiz
+              Continue
             </Button>
           </div>
         );

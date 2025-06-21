@@ -2,6 +2,7 @@
 
 import {
   generatePersonalizedQuestions,
+  type GeneratePersonalizedQuestionsInput,
   type GeneratePersonalizedQuestionsOutput,
 } from '@/ai/flows/generate-personalized-questions';
 import {
@@ -11,10 +12,10 @@ import {
 } from '@/ai/flows/verify-answer-flow';
 
 export async function getQuestions(
-  topic: string
+  input: GeneratePersonalizedQuestionsInput
 ): Promise<GeneratePersonalizedQuestionsOutput> {
   try {
-    const result = await generatePersonalizedQuestions({ topic });
+    const result = await generatePersonalizedQuestions(input);
     return result;
   } catch (error) {
     console.error('Error generating questions:', error);

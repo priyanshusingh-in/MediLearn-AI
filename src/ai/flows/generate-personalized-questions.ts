@@ -1,9 +1,9 @@
 'use server';
 
 /**
- * @fileOverview This file defines a Genkit flow for generating personalized study questions based on a selected medical topic.
+ * @fileOverview This file defines a Genkit flow for generating personalized study questions based on a selected medical topic and user preferences.
  *
- * The flow takes a medical topic as input and returns a set of personalized study questions.
+ * The flow takes a medical topic and user context as input and returns a set of personalized study questions.
  * It exports:
  *   - generatePersonalizedQuestions: The main function to generate questions.
  *   - GeneratePersonalizedQuestionsInput: The input type for the function.
@@ -16,6 +16,8 @@ import {z} from 'genkit';
 // Define the input schema
 const GeneratePersonalizedQuestionsInputSchema = z.object({
   topic: z.string().describe('The medical topic to generate questions for.'),
+  preparationContext: z.string().describe("The context for which the user is preparing (e.g., exam name, learning goal)."),
+  questionType: z.string().describe("The preferred type of questions (e.g., Conceptual, Case-based)."),
 });
 export type GeneratePersonalizedQuestionsInput = z.infer<typeof GeneratePersonalizedQuestionsInputSchema>;
 
@@ -27,7 +29,12 @@ export type GeneratePersonalizedQuestionsOutput = z.infer<typeof GeneratePersona
 
 // Define the main function
 export async function generatePersonalizedQuestions(input: GeneratePersonalizedQuestionsInput): Promise<GeneratePersonalizedQuestionsOutput> {
-  return generatePersonalizedQuestionsFlow(input);
+  // Add a random seed to the topic to avoid caching and get new questions.
+  const uniqueInput = {
+    ...input,
+    topic: `${input.topic} - ${Math.random()}`,
+  };
+  return generatePersonalizedQuestionsFlow(uniqueInput);
 }
 
 // Define the prompt
@@ -35,7 +42,18 @@ const generatePersonalizedQuestionsPrompt = ai.definePrompt({
   name: 'generatePersonalizedQuestionsPrompt',
   input: {schema: GeneratePersonalizedQuestionsInputSchema},
   output: {schema: GeneratePersonalizedQuestionsOutputSchema},
-  prompt: `You are an expert medical educator. Generate a set of personalized study questions based on the following medical topic: {{{topic}}}. The questions should be challenging and relevant to medical students. Return the questions as a JSON array of strings.`,
+  prompt: `You are an expert medical educator creating a personalized quiz.
+
+Generate a set of 5 challenging study questions based on the following criteria:
+
+- Medical Topic: {{{topic}}}
+- User's Preparation Goal: {{{preparationContext}}}
+- Preferred Question Style: {{{questionType}}}
+
+The questions should be highly relevant for a medical student preparing for "{{{preparationContext}}}".
+Tailor the questions to match the requested style: "{{{questionType}}}". For example, if they ask for case-based questions, create short clinical vignettes.
+
+Return the questions as a JSON array of strings.`,
 });
 
 // Define the flow

@@ -18,6 +18,7 @@ import { QuizComplete } from './quiz-complete';
 import { Button } from './ui/button';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { PreQuizSettings, type PreQuizSettingsData } from './pre-quiz-settings';
+import { ThemeToggle } from './theme-toggle';
 
 const medicalTopics: MedicalTopic[] = [
   { name: 'Cardiology', icon: HeartPulse, dataHint: "heart anatomy" },
@@ -160,10 +161,13 @@ export function QuizApp() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-secondary/40">
-      <header className="p-4 flex items-center gap-2 border-b bg-background shadow-sm">
-        <Stethoscope className="h-8 w-8 text-primary" />
-        <h1 className="text-2xl font-bold text-foreground">MediLearn AI</h1>
+    <div className="min-h-screen flex flex-col">
+      <header className="p-4 flex items-center justify-between gap-2 border-b bg-background shadow-sm">
+        <div className="flex items-center gap-2">
+            <Stethoscope className="h-8 w-8 text-primary" />
+            <h1 className="text-2xl font-bold text-foreground">MediLearn AI</h1>
+        </div>
+        <ThemeToggle />
       </header>
       <main className="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8">
         {renderContent()}

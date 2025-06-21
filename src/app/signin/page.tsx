@@ -15,26 +15,25 @@ export default function SigninPage() {
   const [isProcessingRedirect, setIsProcessingRedirect] = useState(true);
 
   useEffect(() => {
-    // This effect is specifically to handle the result of a Google Sign-In redirect.
-    // It runs once when the component mounts to "catch" the login information.
-    const handleRedirect = async () => {
+    // This effect runs once on mount to process any pending redirect from Google.
+    const processRedirect = async () => {
       try {
         await getRedirectResult(auth);
-        // If getRedirectResult resolves, onAuthStateChanged in our AuthContext
+        // If getRedirectResult is successful, onAuthStateChanged in our AuthContext
         // will fire with the new user state, which will then trigger the second useEffect.
       } catch (error) {
         console.error("Error processing sign-in redirect:", error);
       } finally {
-        // No matter the outcome, we are done processing the redirect attempt.
+        // Regardless of outcome, we're done with the redirect check.
         setIsProcessingRedirect(false);
       }
     };
-    handleRedirect();
-  }, []);
+    processRedirect();
+  }, []); // Empty dependency array ensures this runs only once.
 
   useEffect(() => {
-    // This effect handles redirecting the user away from the sign-in page
-    // if they are already authenticated. It waits for the redirect check to finish.
+    // This effect handles redirecting the user away from the sign-in page if they are authenticated.
+    // It waits for BOTH the redirect check and the initial auth load to be complete.
     if (!isProcessingRedirect && !authLoading && user) {
       const redirectPath = sessionStorage.getItem('redirectAfterLogin');
       sessionStorage.removeItem('redirectAfterLogin');
@@ -42,9 +41,20 @@ export default function SigninPage() {
     }
   }, [user, authLoading, isProcessingRedirect, router]);
 
-  // Show a loader if we are processing the redirect, if the auth state is loading,
-  // or if a user is logged in (which means they are about to be redirected).
-  if (isProcessingRedirect || authLoading || user) {
+  // Show a loader if we are still processing the redirect OR waiting for the initial auth state from Firebase.
+  // We do NOT check for `user` here, as that would cause a permanent loading screen.
+  // The useEffect hook above will handle redirecting if a user is found.
+  if (isProcessingRedirect || authLoading) {
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
+  
+  // If a user object exists, we show a loader while we are preparing to redirect them.
+  // This prevents the sign-in form from flashing on screen for a logged-in user.
+  if (user) {
     return (
       <div className="flex min-h-screen w-full items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -52,6 +62,7 @@ export default function SigninPage() {
     );
   }
 
+  // If we are done with all loading/processing and there is no user, show the sign-in page.
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">

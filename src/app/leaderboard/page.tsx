@@ -18,6 +18,7 @@ export default function LeaderboardPage() {
   
     useEffect(() => {
       if (!authLoading && !user) {
+        sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
         router.push('/signin');
       }
     }, [user, authLoading, router]);

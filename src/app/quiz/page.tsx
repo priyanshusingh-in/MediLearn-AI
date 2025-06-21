@@ -13,6 +13,7 @@ export default function QuizPage() {
 
   useEffect(() => {
     if (!loading && !user) {
+      sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
       router.push('/signin');
     }
   }, [user, loading, router]);

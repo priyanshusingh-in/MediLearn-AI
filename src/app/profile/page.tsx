@@ -17,6 +17,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!authLoading && !user) {
+      sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
       router.push('/signin');
     }
   }, [user, authLoading, router]);

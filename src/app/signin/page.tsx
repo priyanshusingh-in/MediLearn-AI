@@ -13,7 +13,9 @@ export default function SigninPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.push('/quiz');
+      const redirectPath = sessionStorage.getItem('redirectAfterLogin');
+      sessionStorage.removeItem('redirectAfterLogin');
+      router.push(redirectPath || '/quiz');
     }
   }, [user, loading, router]);
 

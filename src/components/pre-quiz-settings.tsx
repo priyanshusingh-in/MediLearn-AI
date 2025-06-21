@@ -21,8 +21,6 @@ import type { MedicalTopic } from './subject-selector';
 import { ArrowLeft } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { Slider } from './ui/slider';
-
 
 const formSchema = z.object({
   preparationContext: z.string().min(3, {
@@ -31,7 +29,7 @@ const formSchema = z.object({
   questionType: z.string({
     required_error: 'Please select a question type.',
   }),
-  numberOfQuestions: z.number().min(3).max(10),
+  numberOfQuestions: z.number().min(5).max(20),
 });
 
 export type PreQuizSettingsData = z.infer<typeof formSchema>;
@@ -59,6 +57,8 @@ const questionTypes = [
     description: 'Applies knowledge to solve short clinical vignettes.',
   },
 ];
+
+const questionCountOptions = [5, 10, 15, 20];
 
 export function PreQuizSettings({ topic, onSubmit, onBack }: PreQuizSettingsProps) {
   const form = useForm<PreQuizSettingsData>({
@@ -142,20 +142,31 @@ export function PreQuizSettings({ topic, onSubmit, onBack }: PreQuizSettingsProp
                 <FormItem>
                   <FormLabel className="text-base">Number of Questions</FormLabel>
                    <FormControl>
-                     <div className="flex items-center gap-4 pt-2">
-                        <Slider
-                            defaultValue={[field.value]}
-                            min={3}
-                            max={10}
-                            step={1}
-                            onValueChange={(value) => field.onChange(value[0])}
-                            className="flex-1"
-                        />
-                        <span className="font-bold text-lg text-primary w-10 text-center p-2 rounded-md bg-muted">{field.value}</span>
-                     </div>
+                    <RadioGroup
+                      onValueChange={(value) => field.onChange(parseInt(value, 10))}
+                      defaultValue={String(field.value)}
+                      className="flex flex-wrap items-center gap-4 pt-2"
+                    >
+                      {questionCountOptions.map((count) => (
+                        <FormItem key={count} className="flex items-center space-y-0">
+                           <FormControl>
+                            <RadioGroupItem value={String(count)} id={`count-${count}`} className="sr-only" />
+                          </FormControl>
+                          <Label
+                            htmlFor={`count-${count}`}
+                            className={cn(
+                              'flex h-10 cursor-pointer items-center justify-center rounded-md border-2 border-muted bg-popover px-4 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
+                              field.value === count && 'border-primary'
+                            )}
+                          >
+                            {count}
+                          </Label>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
                   </FormControl>
                   <FormDescription>
-                    Choose how many questions you want in your quiz (from 3 to 10).
+                    Choose how many questions you want in your quiz.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

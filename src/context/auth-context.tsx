@@ -20,12 +20,15 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        await getOrCreateUserProfile(user);
-      }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      // Set user state immediately to update the UI.
       setUser(user);
       setLoading(false);
+
+      // Handle user profile creation in the background without blocking the UI.
+      if (user) {
+        getOrCreateUserProfile(user);
+      }
     });
 
     return () => unsubscribe();

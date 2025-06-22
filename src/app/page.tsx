@@ -1,5 +1,7 @@
-import { HomePage } from '@/components/home-page';
-import { Header } from '@/components/header';
+"use client";
+
+import { HomePage } from "@/components/home-page";
+import { Header } from "@/components/header";
 
 export default function Home() {
   return (

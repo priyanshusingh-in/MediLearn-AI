@@ -8,7 +8,7 @@
  *   - VerifyAnswerOutput: The output type for the function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai} from '@/ai/genkit-manual';
 import {z} from 'genkit';
 
 // Define the input schema

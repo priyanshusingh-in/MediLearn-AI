@@ -111,6 +111,30 @@ export default function LeaderboardPage() {
     return <span className="font-bold">{rank}</span>;
   };
 
+  const maskEmail = (email: string | null, isCurrentUser: boolean) => {
+    if (!email) {
+      return "";
+    }
+
+    if (isCurrentUser) {
+      return email;
+    }
+
+    if (!email.includes("@")) {
+      return email;
+    }
+
+    const [localPart, domain] = email.split("@");
+    const maskedLocal =
+      localPart.length > 2
+        ? localPart.charAt(0) +
+          "*".repeat(localPart.length - 2) +
+          localPart.charAt(localPart.length - 1)
+        : localPart.charAt(0) + "*";
+
+    return `${maskedLocal}@${domain}`;
+  };
+
   return (
     <>
       <Header />
@@ -184,7 +208,10 @@ export default function LeaderboardPage() {
                           <div>
                             <p className="font-medium">{profile.displayName}</p>
                             <p className="text-xs text-muted-foreground">
-                              {profile.email}
+                              {maskEmail(
+                                profile.email,
+                                profile.uid === user?.uid
+                              )}
                             </p>
                           </div>
                         </div>

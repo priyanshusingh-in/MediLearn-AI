@@ -2,6 +2,14 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, connectAuthEmulator, Auth } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator, Firestore, enableNetwork, disableNetwork } from "firebase/firestore";
 
+// Debug environment variables first
+console.log('🔍 Environment Variables Debug:', {
+  NODE_ENV: process.env.NODE_ENV,
+  NEXT_PUBLIC_FIREBASE_API_KEY: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? 'Set (' + process.env.NEXT_PUBLIC_FIREBASE_API_KEY.substring(0, 10) + '...)' : 'NOT SET',
+  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'NOT SET',
+  NEXT_PUBLIC_FIREBASE_PROJECT_ID: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'NOT SET',
+});
+
 // Create Firebase config with fallbacks to ensure app doesn't crash if env vars are missing
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -13,8 +21,8 @@ const firebaseConfig = {
 };
 
 // Debug: Log the actual config values in development only
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-  console.log('Firebase Config Debug:', {
+if (process.env.NODE_ENV === 'development') {
+  console.log('🔥 Firebase Config Debug:', {
     apiKey: firebaseConfig.apiKey ? 'Present' : 'Missing',
     authDomain: firebaseConfig.authDomain ? 'Present' : 'Missing', 
     projectId: firebaseConfig.projectId ? 'Present' : 'Missing',
@@ -28,26 +36,34 @@ if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
 const requiredConfigKeys = [
   'apiKey',
   'authDomain', 
-  'projectId',
-  'storageBucket',
-  'messagingSenderId',
-  'appId'
+  'projectId'
 ] as const;
 
 const missingKeys = requiredConfigKeys.filter(key => !firebaseConfig[key]);
 
 if (missingKeys.length > 0) {
-  console.error('Missing Firebase configuration keys:', missingKeys);
-  console.error('Please check your .env file contains all required NEXT_PUBLIC_FIREBASE_* variables');
+  console.error('❌ Missing Firebase configuration keys:', missingKeys);
+  console.error('🔧 Please check your .env.local file contains all required NEXT_PUBLIC_FIREBASE_* variables');
+  console.error('🔍 Current config state:', firebaseConfig);
+  
+  // Don't throw an error immediately - let's try to continue and see what happens
+  console.warn('⚠️ Attempting to initialize Firebase with incomplete config...');
 }
 
-// Initialize Firebase
-// First initialize the app
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+// Initialize Firebase only if all required config is present
+let app: any;
+let auth: Auth;
+let db: Firestore;
 
-// Then initialize auth and firestore
-const auth: Auth = getAuth(app);
-const db: Firestore = getFirestore(app);
+try {
+  app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+  auth = getAuth(app);
+  db = getFirestore(app);
+  console.log('✅ Firebase initialized successfully');
+} catch (error) {
+  console.error('❌ Firebase initialization failed:', error);
+  throw error;
+}
 
 // Configure Firestore settings for better connectivity
 if (typeof window !== 'undefined') {

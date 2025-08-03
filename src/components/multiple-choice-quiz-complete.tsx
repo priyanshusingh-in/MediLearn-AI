@@ -60,11 +60,21 @@ export function MultipleChoiceQuizComplete({
   // Get performance category
   const getPerformanceCategory = () => {
     if (percentageScore >= 90)
-      return { label: "Excellent", color: "text-green-600" };
-    if (percentageScore >= 75) return { label: "Good", color: "text-blue-600" };
+      return {
+        label: "Excellent",
+        color: "text-green-600 dark:text-green-400",
+      };
+    if (percentageScore >= 75)
+      return { label: "Good", color: "text-blue-600 dark:text-blue-400" };
     if (percentageScore >= 60)
-      return { label: "Satisfactory", color: "text-yellow-600" };
-    return { label: "Needs Improvement", color: "text-red-600" };
+      return {
+        label: "Satisfactory",
+        color: "text-yellow-600 dark:text-yellow-400",
+      };
+    return {
+      label: "Needs Improvement",
+      color: "text-red-600 dark:text-red-400",
+    };
   };
 
   const performance = getPerformanceCategory();
@@ -212,21 +222,21 @@ export function MultipleChoiceQuizComplete({
                           className={cn(
                             "p-2 rounded text-sm",
                             optionIndex === answer.correctAnswerIndex &&
-                              "bg-green-50 border-l-4 border-green-500",
+                              "bg-green-500/10 dark:bg-green-500/20 border-l-4 border-green-500",
                             answer.userAnswerIndex === optionIndex &&
                               optionIndex !== answer.correctAnswerIndex &&
-                              "bg-red-50 border-l-4 border-red-500"
+                              "bg-red-500/10 dark:bg-red-500/20 border-l-4 border-red-500"
                           )}
                         >
                           {option}
                           {optionIndex === answer.correctAnswerIndex && (
-                            <span className="ml-2 text-green-600">
+                            <span className="ml-2 text-green-600 dark:text-green-400">
                               (Correct)
                             </span>
                           )}
                           {answer.userAnswerIndex === optionIndex &&
                             optionIndex !== answer.correctAnswerIndex && (
-                              <span className="ml-2 text-red-600">
+                              <span className="ml-2 text-red-600 dark:text-red-400">
                                 (Your answer)
                               </span>
                             )}
@@ -234,7 +244,7 @@ export function MultipleChoiceQuizComplete({
                       ))}
                     </div>
 
-                    <div className="mt-3 text-sm text-gray-700">
+                    <div className="mt-3 text-sm text-gray-700 dark:text-gray-300">
                       <strong>Explanation:</strong> {answer.explanation}
                     </div>
                   </div>

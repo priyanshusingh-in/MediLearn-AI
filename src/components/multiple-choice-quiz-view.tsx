@@ -188,14 +188,15 @@ export function MultipleChoiceQuizView({
 
           if (showResult) {
             if (isCorrect) {
-              optionClass += " border-green-500 bg-green-50";
+              optionClass +=
+                " border-green-500 bg-green-500/10 dark:bg-green-500/20";
             } else if (isSelected && !isCorrect) {
-              optionClass += " border-red-500 bg-red-50";
+              optionClass += " border-red-500 bg-red-500/10 dark:bg-red-500/20";
             }
           } else if (isSelected) {
-            optionClass += " border-primary";
+            optionClass += " border-primary bg-primary/10 dark:bg-primary/20";
           } else {
-            optionClass += " hover:border-gray-400";
+            optionClass += " hover:border-gray-400 dark:hover:border-gray-600";
           }
 
           return (
@@ -240,7 +241,9 @@ export function MultipleChoiceQuizView({
                   ? "Correct!"
                   : "Incorrect"}
               </p>
-              <p className="text-gray-700">{currentQuestion.explanation}</p>
+              <p className="text-gray-700 dark:text-gray-300">
+                {currentQuestion.explanation}
+              </p>
               {selectedOption !== currentQuestion.correctAnswer && (
                 <p className="mt-2 font-medium">
                   Correct answer:{" "}

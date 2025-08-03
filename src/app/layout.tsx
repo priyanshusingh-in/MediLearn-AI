@@ -1,18 +1,23 @@
-import type {Metadata} from 'next';
-import './globals.css';
-import { ThemeProvider } from '@/components/theme-provider';
-import { AuthContextProvider } from '@/context/auth-context';
-import { Toaster } from '@/components/ui/toaster';
-import { Inter } from 'next/font/google';
+import type { Metadata } from "next";
+import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { AuthContextProvider } from "@/context/auth-context";
+import { Toaster } from "@/components/ui/toaster";
+import { Inter } from "next/font/google";
 
 const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-body',
+  subsets: ["latin"],
+  variable: "--font-body",
 });
 
 export const metadata: Metadata = {
-  title: 'MediLearn AI',
-  description: 'AI-powered learning for medical students.',
+  title: "MediLearn AI",
+  description: "AI-powered learning for medical students.",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

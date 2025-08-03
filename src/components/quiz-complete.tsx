@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, Star, Lightbulb } from 'lucide-react';
+import { CheckCircle2, Star, Lightbulb, TrendingUp } from 'lucide-react';
 import { generateFeedbackAction } from '@/app/actions';
 import { Skeleton } from './ui/skeleton';
 import { useAuth } from '@/context/auth-context';
@@ -35,7 +35,7 @@ export function QuizComplete({ topic, scores, questions, answers, onRestart }: Q
         score: scores[i] || 0,
       }));
       
-      // Save score if user is logged in
+      // Save score to leaderboard if user is logged in
       if (user) {
         const totalQuizScore = scores.reduce((acc, score) => acc + score, 0);
         const averageQuizScore = scores.length > 0 ? totalQuizScore / scores.length : 0;
@@ -93,6 +93,14 @@ export function QuizComplete({ topic, scores, questions, answers, onRestart }: Q
     return <div className="text-left space-y-2">{formattedFeedback}</div>;
   };
 
+  const getPerformanceMessage = () => {
+    const score = parseFloat(averageScore);
+    if (score >= 9.0) return "Exceptional performance! You've demonstrated mastery of this topic.";
+    if (score >= 7.5) return "Great work! You have a solid understanding of the material.";
+    if (score >= 6.0) return "Good effort! With focused study, you'll excel in this area.";
+    return "Keep practicing! Medical knowledge builds with consistent effort.";
+  };
+
   return (
     <div className="w-full max-w-2xl flex flex-col gap-6">
       <Card className="w-full text-center shadow-xl border-0 animate-in fade-in slide-in-from-top-12 duration-500 ease-out">
@@ -113,6 +121,7 @@ export function QuizComplete({ topic, scores, questions, answers, onRestart }: Q
                   <span>{averageScore} / 10</span>
               </div>
               <p className="text-sm text-muted-foreground">Average Score</p>
+              <p className="text-sm text-foreground/70 italic mt-2">{getPerformanceMessage()}</p>
           </div>
           <Button size="lg" onClick={onRestart} className="w-full">
             Take Another Quiz
@@ -127,13 +136,32 @@ export function QuizComplete({ topic, scores, questions, answers, onRestart }: Q
                     <Lightbulb className="h-6 w-6 text-primary"/>
                 </div>
                 <div>
-                    <CardTitle className="text-2xl">Personalized Feedback</CardTitle>
-                    <CardDescription>Actionable advice to guide your learning journey.</CardDescription>
+                    <CardTitle className="text-2xl">Personalized Feedback & Improvement Plan</CardTitle>
+                    <CardDescription>Actionable advice to guide your learning journey and boost your performance.</CardDescription>
                 </div>
             </div>
         </CardHeader>
         <CardContent>
             {renderFeedback()}
+        </CardContent>
+      </Card>
+
+      <Card className="w-full shadow-xl border-0 animate-in fade-in slide-in-from-top-12 duration-500 ease-out delay-300">
+        <CardHeader>
+            <div className="flex items-center gap-3">
+                <div className="bg-green-500/10 rounded-full p-2">
+                    <TrendingUp className="h-6 w-6 text-green-600"/>
+                </div>
+                <div>
+                    <CardTitle className="text-xl">Score Added to Leaderboard</CardTitle>
+                    <CardDescription>Your performance has been recorded and will appear on the leaderboard.</CardDescription>
+                </div>
+            </div>
+        </CardHeader>
+        <CardContent>
+            <p className="text-sm text-foreground/80">
+                Your average score of <strong>{averageScore}/10</strong> has been saved to your profile and will contribute to your overall ranking on the leaderboard. Keep practicing to improve your position!
+            </p>
         </CardContent>
       </Card>
     </div>

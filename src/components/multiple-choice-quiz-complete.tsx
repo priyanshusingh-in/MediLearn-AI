@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,10 +18,12 @@ import {
   BarChart,
   Home,
   RotateCcw,
+  TrendingUp,
+  Lightbulb,
 } from "lucide-react";
 import { QuizResult } from "./multiple-choice-quiz-view";
 import { cn } from "@/lib/utils";
-import { saveQuizResult } from "@/lib/firestore";
+import { updateUserQuizStats } from "@/lib/firestore";
 import { useToast } from "@/hooks/use-toast";
 
 interface MultipleChoiceQuizCompleteProps {
@@ -41,8 +43,7 @@ export function MultipleChoiceQuizComplete({
   onStartNew,
   onGoHome,
 }: MultipleChoiceQuizCompleteProps) {
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [scoreSaved, setScoreSaved] = useState(false);
   const { toast } = useToast();
 
   // Format time as mm:ss
@@ -90,54 +91,65 @@ export function MultipleChoiceQuizComplete({
     return "Keep practicing! Medical knowledge takes time to build.";
   };
 
-  // Save result to database
-  const handleSaveResult = async () => {
-    if (!userId) {
-      toast({
-        title: "Not signed in",
-        description: "Please sign in to save your quiz results.",
-        variant: "destructive",
-      });
-      return;
+  // Get personalized improvement notes
+  const getImprovementNotes = () => {
+    const notes = [];
+    
+    if (percentageScore < 90) {
+      notes.push("Focus on reviewing the questions you missed to strengthen your understanding.");
     }
-
-    try {
-      setSaving(true);
-
-      await saveQuizResult({
-        userId,
-        score: result.score,
-        totalPoints: result.totalPoints,
-        totalQuestions: result.totalQuestions,
-        correctAnswers: result.correctAnswers,
-        category,
-        difficulty,
-        completedAt: new Date(),
-        timeSpent: result.timeSpent,
-        answers: result.answers.map((a) => ({
-          questionId: a.questionId,
-          userAnswerIndex: a.userAnswerIndex,
-          isCorrect: a.isCorrect,
-          points: a.points,
-        })),
-      });
-
-      setSaved(true);
-      toast({
-        title: "Results saved",
-        description: "Your quiz results have been saved to your profile.",
-      });
-    } catch (error) {
-      console.error("Error saving quiz result:", error);
-      toast({
-        title: "Error saving results",
-        description: "There was a problem saving your quiz results.",
-        variant: "destructive",
-      });
-    } finally {
-      setSaving(false);
+    
+    if (percentageScore < 75) {
+      notes.push("Consider spending more time on foundational concepts before moving to advanced topics.");
     }
+    
+    if (percentageScore < 60) {
+      notes.push("This topic may need more dedicated study time. Try breaking it down into smaller sections.");
+    }
+    
+    // Add specific improvement suggestions based on performance
+    if (result.correctAnswers < result.totalQuestions * 0.8) {
+      notes.push("Practice with more questions in this category to improve your accuracy.");
+    }
+    
+    if (result.timeSpent < 30) {
+      notes.push("Take your time reading questions carefully - accuracy is more important than speed.");
+    }
+    
+    if (notes.length === 0) {
+      notes.push("Excellent performance! Consider challenging yourself with more difficult questions.");
+    }
+    
+    return notes;
   };
+
+  // Save score to leaderboard
+  useEffect(() => {
+    const saveScoreToLeaderboard = async () => {
+      if (!userId) return;
+
+      try {
+        const averageScore = result.score / result.totalQuestions;
+        await updateUserQuizStats(userId, averageScore);
+        setScoreSaved(true);
+        toast({
+          title: "Score saved",
+          description: "Your score has been added to the leaderboard.",
+        });
+      } catch (error) {
+        console.error("Error saving score to leaderboard:", error);
+        toast({
+          title: "Error saving score",
+          description: "There was a problem saving your score to the leaderboard.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    saveScoreToLeaderboard();
+  }, [userId, result.score, result.totalQuestions, toast]);
+
+  const improvementNotes = getImprovementNotes();
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
@@ -189,6 +201,22 @@ export function MultipleChoiceQuizComplete({
 
           <div className="mb-8 p-4 border rounded-lg bg-secondary/10">
             <p className="text-center italic">{getEncouragingMessage()}</p>
+          </div>
+
+          {/* Improvement Notes */}
+          <div className="mb-8 p-4 border rounded-lg bg-blue-50 dark:bg-blue-950/20">
+            <div className="flex items-center gap-2 mb-3">
+              <Lightbulb className="h-5 w-5 text-blue-600" />
+              <h3 className="font-semibold text-blue-800 dark:text-blue-200">Personalized Improvement Notes</h3>
+            </div>
+            <ul className="space-y-2">
+              {improvementNotes.map((note, index) => (
+                <li key={index} className="text-sm text-blue-700 dark:text-blue-300 flex items-start">
+                  <span className="mr-2 mt-1">•</span>
+                  {note}
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* Question breakdown */}
@@ -273,25 +301,14 @@ export function MultipleChoiceQuizComplete({
             New Quiz
           </Button>
 
-          {!saved && (
-            <Button
-              onClick={handleSaveResult}
-              disabled={saving || !userId}
-              className="w-full sm:w-auto sm:ml-auto"
-            >
-              {saving ? "Saving..." : "Save Results"}
-              {!saving && <Award className="ml-2 h-4 w-4" />}
-            </Button>
-          )}
-
-          {saved && (
+          {scoreSaved && (
             <Button
               variant="secondary"
               disabled
               className="w-full sm:w-auto sm:ml-auto"
             >
-              Results Saved
-              <CheckCircle className="ml-2 h-4 w-4" />
+              Score Saved to Leaderboard
+              <TrendingUp className="ml-2 h-4 w-4" />
             </Button>
           )}
         </CardFooter>

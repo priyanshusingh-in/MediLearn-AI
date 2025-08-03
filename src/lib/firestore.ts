@@ -134,31 +134,55 @@ export async function getOrCreateUserProfile(user: User): Promise<UserProfile> {
 }
 
 export async function updateUserQuizStats(uid: string, newScore: number) {
+  console.log("Starting updateUserQuizStats for user:", uid, "with score:", newScore);
   const userRef = doc(db, 'users', uid);
   try {
     await withRetry(async () => {
+      console.log("Executing transaction to update quiz stats...");
       await Promise.race([
         runTransaction(db, async (transaction) => {
-      const userDoc = await transaction.get(userRef);
-      if (!userDoc.exists()) {
+          console.log("Getting user document in transaction...");
+          const userDoc = await transaction.get(userRef);
+          if (!userDoc.exists()) {
+            console.error("User document does not exist for uid:", uid);
             throw new Error("User document does not exist!");
-      }
+          }
 
-      const data = userDoc.data() as UserProfile;
-      const newQuizCount = (data.quizCount || 0) + 1;
-      const newTotalScore = (data.totalScore || 0) + newScore;
-      const newAverageRating = newTotalScore / newQuizCount;
-      
-      transaction.update(userRef, { 
-        quizCount: newQuizCount,
-        totalScore: newTotalScore,
-        averageRating: newAverageRating
-      });
+          const data = userDoc.data() as UserProfile;
+          console.log("Current user data:", {
+            quizCount: data.quizCount,
+            totalScore: data.totalScore,
+            averageRating: data.averageRating
+          });
+
+          const newQuizCount = (data.quizCount || 0) + 1;
+          const newTotalScore = (data.totalScore || 0) + newScore;
+          const newAverageRating = newTotalScore / newQuizCount;
+          
+          console.log("Updating user stats:", {
+            newQuizCount,
+            newTotalScore,
+            newAverageRating
+          });
+
+          transaction.update(userRef, { 
+            quizCount: newQuizCount,
+            totalScore: newTotalScore,
+            averageRating: newAverageRating
+          });
         }),
         createTimeoutPromise(12000, 'update quiz stats') // Reduced to 12 seconds
       ]);
+      console.log("Quiz stats updated successfully");
     }, 1, 1000); // Only 1 retry
   } catch (error: any) {
+    console.error('updateUserQuizStats error details:', {
+      uid,
+      newScore,
+      code: error.code,
+      message: error.message,
+      stack: error.stack
+    });
     handleFirestoreError(error, 'update quiz statistics');
   }
 }
@@ -183,26 +207,46 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
 
 export async function getLeaderboard(): Promise<UserProfile[]> {
   try {
+    console.log("Starting getLeaderboard function...");
     return await withRetry(async () => {
-    const usersRef = collection(db, 'users');
-    const q = query(usersRef, orderBy('averageRating', 'desc'), limit(100));
+      console.log("Creating query for leaderboard...");
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, orderBy('averageRating', 'desc'), limit(100));
       
+      console.log("Executing leaderboard query...");
       const querySnapshot = await Promise.race([
         getDocs(q),
         createTimeoutPromise(12000, 'get leaderboard') // Reduced to 12 seconds
       ]) as QuerySnapshot<DocumentData>;
       
-    const leaderboard: UserProfile[] = [];
-    querySnapshot.forEach((doc) => {
-        leaderboard.push(doc.data() as UserProfile);
-    });
+      console.log("Query completed, processing results...");
+      const leaderboard: UserProfile[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data() as UserProfile;
+        console.log("Processing user:", data.uid, "with average rating:", data.averageRating);
+        leaderboard.push(data);
+      });
       
       console.log(`Leaderboard loaded with ${leaderboard.length} users`);
-    return leaderboard;
+      return leaderboard;
     }, 1, 1000); // Only 1 retry
   } catch (error: any) {
-    console.error('getLeaderboard error:', error);
-    return []; // Return empty array on error
+    console.error('getLeaderboard error details:', {
+      code: error.code,
+      message: error.message,
+      stack: error.stack
+    });
+    
+    // Provide more specific error messages
+    if (error.code === 'permission-denied') {
+      throw new Error('Permission denied: Unable to access leaderboard data. Please ensure you are signed in.');
+    } else if (error.code === 'unavailable') {
+      throw new Error('Service unavailable: Please check your internet connection and try again.');
+    } else if (error.message?.includes('timeout')) {
+      throw new Error('Request timed out: The leaderboard is taking longer than expected to load.');
+    } else {
+      throw new Error(`Failed to load leaderboard: ${error.message || 'Unknown error'}`);
+    }
   }
 }
 

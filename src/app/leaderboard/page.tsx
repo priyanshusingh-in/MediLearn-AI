@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Loader2, Trophy, Medal, RefreshCw } from "lucide-react";
+import { Loader2, Trophy, Medal, RefreshCw, AlertCircle } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function LeaderboardPage() {
   const { user, loading: authLoading } = useAuth();
@@ -51,11 +52,15 @@ export default function LeaderboardPage() {
         setError(null);
 
         try {
+          console.log("Loading leaderboard for user:", user.uid);
           const data = await getLeaderboard();
+          console.log("Leaderboard data loaded:", data.length, "users");
           setLeaderboard(data);
         } catch (err) {
           console.error("Error loading leaderboard:", err);
-          setError("Failed to load leaderboard data. Please try again.");
+          const errorMessage =
+            err instanceof Error ? err.message : "Unknown error occurred";
+          setError(`Failed to load leaderboard data: ${errorMessage}`);
         } finally {
           setPageLoading(false);
         }
@@ -73,11 +78,15 @@ export default function LeaderboardPage() {
     setError(null);
 
     try {
+      console.log("Refreshing leaderboard for user:", user.uid);
       const data = await getLeaderboard();
+      console.log("Leaderboard refreshed:", data.length, "users");
       setLeaderboard(data);
     } catch (err) {
       console.error("Error refreshing leaderboard:", err);
-      setError("Failed to refresh leaderboard data. Please try again.");
+      const errorMessage =
+        err instanceof Error ? err.message : "Unknown error occurred";
+      setError(`Failed to refresh leaderboard data: ${errorMessage}`);
     } finally {
       setPageLoading(false);
     }
@@ -146,11 +155,31 @@ export default function LeaderboardPage() {
         ) : error ? (
           <Card>
             <CardHeader>
-              <CardTitle>Error</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-red-500" />
+                Error Loading Leaderboard
+              </CardTitle>
               <CardDescription className="text-red-500">
                 {error}
               </CardDescription>
             </CardHeader>
+            <CardContent>
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  <p className="mb-2">This error might be caused by:</p>
+                  <ul className="list-disc list-inside space-y-1 text-sm">
+                    <li>Network connectivity issues</li>
+                    <li>Firebase permissions not properly configured</li>
+                    <li>Temporary service unavailability</li>
+                  </ul>
+                  <p className="mt-2">
+                    Please try refreshing the page or check your internet
+                    connection.
+                  </p>
+                </AlertDescription>
+              </Alert>
+            </CardContent>
             <CardFooter>
               <Button
                 onClick={handleRefresh}

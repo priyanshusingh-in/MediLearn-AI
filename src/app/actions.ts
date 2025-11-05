@@ -107,6 +107,8 @@ Generate ${input.numberOfQuestions} unique, educational, and clinically relevant
 
     // Try multiple models in order of preference
     const modelsToTry = [
+      'gemini-1.5-flash-latest',
+      'gemini-1.5-pro-latest',
       'gemini-1.5-flash',
       'gemini-1.5-pro',
       'gemini-1.0-pro'
@@ -120,7 +122,7 @@ Generate ${input.numberOfQuestions} unique, educational, and clinically relevant
         console.log(`📡 Trying model: ${model}...`);
         
         response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`,
+          `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${API_KEY}`,
           {
             method: 'POST',
             headers: {

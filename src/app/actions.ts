@@ -107,6 +107,8 @@ Generate ${input.numberOfQuestions} unique, educational, and clinically relevant
 
     // Try multiple models in order of preference
     const modelsToTry = [
+      'gemini-2.5-flash',
+      'gemini-2.5-pro',
       'gemini-1.5-flash-latest',
       'gemini-1.5-pro-latest',
       'gemini-1.5-flash',

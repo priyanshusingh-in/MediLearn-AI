@@ -103,7 +103,7 @@ Return ONLY a valid JSON object (no markdown, no code blocks, no extra text) in 
   ]
 }
 
-CRITICAL: Return ONLY the raw JSON object. Do NOT wrap it in markdown code blocks (```json) or any other formatting. Start with { and end with }.
+CRITICAL: Return ONLY the raw JSON object. Do NOT wrap it in markdown code blocks (\`\`\`json) or any other formatting. Start with { and end with }.
 
 Generate ${input.numberOfQuestions} unique, educational, and clinically relevant questions now:`;
 

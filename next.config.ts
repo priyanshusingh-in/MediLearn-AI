@@ -9,9 +9,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   // Ensure proper port handling for Render
-  experimental: {
-    serverComponentsExternalPackages: ['firebase-admin'],
-  },
+  serverExternalPackages: ['firebase-admin'],
   env: {
     NEXT_PUBLIC_FIREBASE_API_KEY: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
     NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,

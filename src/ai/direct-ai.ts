@@ -52,7 +52,7 @@ DIFFICULTY GUIDELINES:
 - Intermediate (15 points): More complex relationships, differential diagnosis, complications
 - Advanced (20 points): Rare conditions, complex cases, latest research findings
 
-Return ONLY a JSON object in this exact format:
+Return ONLY a valid JSON object (no markdown, no code blocks, no extra text) in this exact format:
 {
   "questions": [
     {
@@ -71,6 +71,8 @@ Return ONLY a JSON object in this exact format:
     }
   ]
 }
+
+CRITICAL: Return ONLY the raw JSON object. Do NOT wrap it in markdown code blocks (```json) or any other formatting. Start with { and end with }.
 
 Generate ${input.numberOfQuestions} unique, educational, and clinically relevant questions now:`;
 
@@ -117,16 +119,56 @@ Generate ${input.numberOfQuestions} unique, educational, and clinically relevant
     // Parse the JSON response
     let questionsData;
     try {
+      // Clean the response: remove markdown code blocks if present
+      let cleanedText = generatedText.trim();
+      
+      // Remove markdown code fences (```json ... ``` or ``` ... ```)
+      cleanedText = cleanedText.replace(/^```(?:json)?\s*\n?/i, '');
+      cleanedText = cleanedText.replace(/\n?```\s*$/i, '');
+      cleanedText = cleanedText.trim();
+      
       // Try to extract JSON from the response
-      const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        questionsData = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('No JSON found in response');
+      // Look for the JSON object with balanced braces
+      let jsonString = cleanedText;
+      
+      // Find the first { and try to find matching closing }
+      const firstBrace = jsonString.indexOf('{');
+      if (firstBrace === -1) {
+        throw new Error('No JSON object found in response');
       }
+      
+      // Find the last } that matches the structure
+      let braceCount = 0;
+      let lastBrace = -1;
+      for (let i = firstBrace; i < jsonString.length; i++) {
+        if (jsonString[i] === '{') braceCount++;
+        if (jsonString[i] === '}') {
+          braceCount--;
+          if (braceCount === 0) {
+            lastBrace = i;
+            break;
+          }
+        }
+      }
+      
+      if (lastBrace === -1) {
+        // JSON might be incomplete, try to extract what we can
+        console.warn('⚠️ JSON appears incomplete, attempting to extract partial data...');
+        // Try the original regex approach as fallback
+        const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          jsonString = jsonMatch[0];
+        } else {
+          throw new Error('No valid JSON structure found');
+        }
+      } else {
+        jsonString = jsonString.substring(firstBrace, lastBrace + 1);
+      }
+      
+      questionsData = JSON.parse(jsonString);
     } catch (parseError) {
       console.error('❌ JSON parse error:', parseError);
-      console.log('📄 Raw response:', generatedText);
+      console.log('📄 Raw response (first 1000 chars):', generatedText.substring(0, 1000));
       throw new Error('Failed to parse AI response as JSON');
     }
 
